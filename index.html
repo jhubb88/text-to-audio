@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text to Audio — Jimmy Hubbard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg:       #0a0f1e;
+      --surface:  #111827;
+      --surface2: #1a2438;
+      --border:   #1e293b;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --dim:      #94a3b8;
+      --accent:   #2563eb;
+      --accent-h: #1d4ed8;
+      --green:    #10b981;
+      --red:      #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px 32px;
+    }
+
+    /* Header — full-width top bar matching Writing Space */
+    header {
+      align-self: stretch;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      text-align: left;
+      margin-bottom: 40px;
+      flex-shrink: 0;
+    }
+
+    .logo-badge { display: none; }
+
+    header h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+
+    header h1 .title-accent { color: var(--accent); }
+
+    header p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    header p:last-child { margin-left: auto; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .card-icon.purple { background: linear-gradient(135deg, var(--accent-h), var(--accent)); }
+    .card-icon.blue   { background: linear-gradient(135deg, #1d4ed8, #60a5fa); }
+
+    .card h2 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* Steps */
+    .steps { list-style: none; counter-reset: steps; }
+
+    .steps li {
+      counter-increment: steps;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+      font-size: 0.93rem;
+      color: var(--dim);
+      line-height: 1.6;
+    }
+
+    .steps li::before {
+      content: counter(steps);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .steps li strong { color: var(--text); }
+
+    /* Drop zone */
+    #drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      background: var(--surface2);
+    }
+
+    #drop-zone:hover, #drop-zone.over {
+      border-color: var(--accent);
+      background: rgba(37,99,235,0.1);
+    }
+
+    #drop-zone svg { margin-bottom: 10px; opacity: 0.6; stroke: var(--accent); }
+    #drop-zone p { color: var(--muted); font-size: 0.93rem; }
+    #drop-zone span { color: var(--accent); font-weight: 600; cursor: pointer; }
+    #file-input { display: none; }
+
+    #file-name {
+      font-size: 0.85rem;
+      color: var(--green);
+      margin-bottom: 16px;
+      min-height: 1.2rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 160px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.93rem;
+      font-family: inherit;
+      resize: vertical;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 20px;
+      background: var(--surface2);
+    }
+
+    textarea::placeholder { color: var(--muted); }
+    textarea:focus { border-color: var(--accent); }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+    }
+
+    select:focus { border-color: var(--accent); }
+    select option { background: var(--surface); color: var(--text); }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .range-val {
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-align: right;
+      font-weight: 600;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      font-family: inherit;
+    }
+
+    button:active { transform: scale(0.97); }
+
+    #btn-play {
+      background: var(--accent);
+      color: #fff;
+      flex: 1;
+    }
+
+    #btn-play:hover:not(:disabled) { background: var(--accent-h); }
+    #btn-play:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+
+    #btn-stop {
+      background: var(--red);
+      color: #fff;
+    }
+
+    #btn-stop:hover:not(:disabled) { background: #dc2626; }
+    #btn-stop:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+
+    /* Status */
+    #status {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      min-height: 1.2rem;
+      text-align: center;
+    }
+
+    #status.error { color: #f87171; }
+
+    #status.speaking {
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: flex-end;
+    }
+
+    .wave span {
+      display: inline-block;
+      width: 3px;
+      background: var(--green);
+      border-radius: 2px;
+      animation: wave 0.8s ease-in-out infinite;
+    }
+
+    .wave span:nth-child(1) { height: 8px;  animation-delay: 0s; }
+    .wave span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+    .wave span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+    .wave span:nth-child(4) { height: 16px; animation-delay: 0.15s; }
+    .wave span:nth-child(5) { height: 8px;  animation-delay: 0.05s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50%       { transform: scaleY(0.4); }
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-badge">🔊 Jimmy Hubbard</div>
+    <h1>Text to <span class="title-accent">Audio</span></h1>
+    <p>Upload a .txt file or paste your text — then hit Play.</p>
+    <p style="margin-top:8px;font-size:0.78rem;color:#6b7a99;letter-spacing:0.3px;">Powered by Web Speech API &nbsp;·&nbsp; Built by Jimmy Hubbard</p>
+  </header>
+
+  <!-- Instructions -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📋</div>
+      <h2>How to Use</h2>
+    </div>
+    <ol class="steps">
+      <li><span>Upload a <strong>.txt file</strong> using the upload area below, or type/paste text directly into the text box.</span></li>
+      <li><span>Choose a <strong>voice</strong> from the dropdown (options depend on your browser/OS).</span></li>
+      <li><span>Adjust <strong>speed</strong> and <strong>pitch</strong> to your preference using the sliders.</span></li>
+      <li><span>Click <strong>Play</strong> to hear your text read aloud.</span></li>
+      <li><span>Click <strong>Stop</strong> at any time to halt playback.</span></li>
+    </ol>
+  </div>
+
+  <!-- App -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">⚡</div>
+      <h2>Upload or Type</h2>
+    </div>
+
+    <div id="drop-zone">
+      <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="#a78bfa" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+      </svg>
+      <p>Drag & drop a <strong>.txt file</strong> here, or <span id="browse-link">browse files</span></p>
+      <input type="file" id="file-input" accept=".txt" />
+    </div>
+
+    <div id="file-name"></div>
+
+    <textarea id="text-input" placeholder="Or type / paste your text here..."></textarea>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="voice-select">Voice</label>
+        <select id="voice-select"><option>Loading voices...</option></select>
+      </div>
+      <div class="control-group">
+        <label for="rate-slider">Speed</label>
+        <input type="range" id="rate-slider" min="0.5" max="2" step="0.1" value="1" />
+        <div class="range-val" id="rate-val">1.0×</div>
+      </div>
+      <div class="control-group">
+        <label for="pitch-slider">Pitch</label>
+        <input type="range" id="pitch-slider" min="0.5" max="2" step="0.1" value="1" />
+        <div class="range-val" id="pitch-val">1.0</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-play">▶ Play</button>
+      <button id="btn-stop" disabled>■ Stop</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <footer>Powered by the Web Speech API &mdash; Chrome · Edge · Safari · Firefox &mdash; <a href="https://jimmyhubbard2.cc/projects/" style="color:#475569;text-decoration:none;">← Back to Projects</a></footer>
+
+  <script>
+    const dropZone    = document.getElementById('drop-zone');
+    const fileInput   = document.getElementById('file-input');
+    const browseLink  = document.getElementById('browse-link');
+    const fileNameEl  = document.getElementById('file-name');
+    const textInput   = document.getElementById('text-input');
+    const voiceSel    = document.getElementById('voice-select');
+    const rateSlider  = document.getElementById('rate-slider');
+    const pitchSlider = document.getElementById('pitch-slider');
+    const rateVal     = document.getElementById('rate-val');
+    const pitchVal    = document.getElementById('pitch-val');
+    const btnPlay     = document.getElementById('btn-play');
+    const btnStop     = document.getElementById('btn-stop');
+    const statusEl    = document.getElementById('status');
+
+    let voices = [];
+
+    function loadVoices() {
+      voices = speechSynthesis.getVoices();
+      voiceSel.innerHTML = '';
+      if (!voices.length) { voiceSel.innerHTML = '<option>No voices found</option>'; return; }
+      voices.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${v.name} (${v.lang})`;
+        voiceSel.appendChild(opt);
+      });
+    }
+
+    loadVoices();
+    speechSynthesis.addEventListener('voiceschanged', loadVoices);
+
+    rateSlider.addEventListener('input',  () => rateVal.textContent  = parseFloat(rateSlider.value).toFixed(1) + '×');
+    pitchSlider.addEventListener('input', () => pitchVal.textContent = parseFloat(pitchSlider.value).toFixed(1));
+
+    browseLink.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('click',   () => fileInput.click());
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('over');
+      if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) readFile(fileInput.files[0]); });
+
+    function readFile(file) {
+      if (!file.name.endsWith('.txt')) { setStatus('Please upload a .txt file.', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        textInput.value = e.target.result;
+        fileNameEl.textContent = `✓ Loaded: ${file.name} (${file.size.toLocaleString()} bytes)`;
+        setStatus('');
+      };
+      reader.readAsText(file);
+    }
+
+    btnPlay.addEventListener('click', () => {
+      const text = textInput.value.trim();
+      if (!text) { setStatus('Please enter or upload some text first.', 'error'); return; }
+      speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.voice = voices[voiceSel.value] || null;
+      utt.rate  = parseFloat(rateSlider.value);
+      utt.pitch = parseFloat(pitchSlider.value);
+      utt.onstart = () => {
+        btnPlay.disabled = true; btnStop.disabled = false;
+        statusEl.innerHTML = '<span class="wave"><span></span><span></span><span></span><span></span><span></span></span> Speaking...';
+        statusEl.className = 'speaking';
+      };
+      utt.onend = utt.onerror = () => {
+        btnPlay.disabled = false; btnStop.disabled = true;
+        setStatus('');
+      };
+      speechSynthesis.speak(utt);
+    });
+
+    btnStop.addEventListener('click', () => {
+      speechSynthesis.cancel();
+      btnPlay.disabled = false; btnStop.disabled = true;
+      setStatus('');
+    });
+
+    function setStatus(msg, type = '') {
+      statusEl.textContent = msg;
+      statusEl.className = type;
+    }
+  </script>
+</body>
+</html>
