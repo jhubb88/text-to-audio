@@ -39,13 +39,7 @@ Open `http://localhost:8080`. No build step, no dependencies to install.
 
 ## Deployment
 
-Deployed manually to AWS S3 + CloudFront. There is no CI/CD workflow:
-
-```bash
-aws s3 sync . s3://jimmy-text-to-audio \
-  --profile portfolio-user \
-  --exclude ".git/*"
-```
+Deploys automatically on push to main via GitHub Actions (.github/workflows/deploy.yml). S3 + CloudFront invalidation handled by the workflow.
 
 **S3 bucket:** `jimmy-text-to-audio` (us-east-1)
 
