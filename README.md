@@ -2,7 +2,7 @@
 
 Browser-based text-to-speech tool — upload a .txt file or paste text, choose a voice, and play.
 
-**Live demo:** https://d2ey5cipu3t9y.cloudfront.net
+**Live demo:** https://text-to-audio.jimmyhubbard2.cc
 
 ## Overview
 
