@@ -25,6 +25,7 @@
       --accent-h: #1d4ed8;
       --green:    #10b981;
       --red:      #ef4444;
+      --warn:     #f59e0b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,7 +41,6 @@
       padding: 0 20px 32px;
     }
 
-    /* Header — full-width top bar matching Writing Space */
     header {
       align-self: stretch;
       background: var(--surface);
@@ -76,7 +76,6 @@
 
     header p:last-child { margin-left: auto; }
 
-    /* Cards */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -115,9 +114,7 @@
       font-weight: 700;
     }
 
-    /* Steps */
     .steps { list-style: none; counter-reset: steps; }
-
     .steps li {
       counter-increment: steps;
       display: flex;
@@ -128,7 +125,6 @@
       color: var(--dim);
       line-height: 1.6;
     }
-
     .steps li::before {
       content: counter(steps);
       background: var(--accent);
@@ -144,10 +140,8 @@
       font-weight: 700;
       margin-top: 1px;
     }
-
     .steps li strong { color: var(--text); }
 
-    /* Drop zone */
     #drop-zone {
       border: 2px dashed var(--border);
       border-radius: 12px;
@@ -158,12 +152,10 @@
       margin-bottom: 16px;
       background: var(--surface2);
     }
-
     #drop-zone:hover, #drop-zone.over {
       border-color: var(--accent);
       background: rgba(37,99,235,0.1);
     }
-
     #drop-zone svg { margin-bottom: 10px; opacity: 0.6; stroke: var(--accent); }
     #drop-zone p { color: var(--muted); font-size: 0.93rem; }
     #drop-zone span { color: var(--accent); font-weight: 600; cursor: pointer; }
@@ -188,27 +180,34 @@
       color: var(--text);
       outline: none;
       transition: border-color 0.15s;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       background: var(--surface2);
     }
-
     textarea::placeholder { color: var(--muted); }
     textarea:focus { border-color: var(--accent); }
 
-    /* Controls */
+    #char-counter {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: right;
+      margin-bottom: 20px;
+      min-height: 1.1rem;
+    }
+    #char-counter.warn  { color: var(--warn); font-weight: 600; }
+    #char-counter.error { color: var(--red); font-weight: 700; }
+
     .controls {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       margin-bottom: 20px;
     }
-
     .control-group {
       display: flex;
       flex-direction: column;
       gap: 6px;
       flex: 1;
-      min-width: 140px;
+      min-width: 200px;
     }
 
     label {
@@ -231,7 +230,6 @@
       outline: none;
       font-family: inherit;
     }
-
     select:focus { border-color: var(--accent); }
     select option { background: var(--surface); color: var(--text); }
 
@@ -248,7 +246,6 @@
       font-weight: 600;
     }
 
-    /* Buttons */
     .btn-row {
       display: flex;
       gap: 12px;
@@ -265,7 +262,6 @@
       transition: background 0.15s, transform 0.1s;
       font-family: inherit;
     }
-
     button:active { transform: scale(0.97); }
 
     #btn-play {
@@ -273,7 +269,6 @@
       color: #fff;
       flex: 1;
     }
-
     #btn-play:hover:not(:disabled) { background: var(--accent-h); }
     #btn-play:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
 
@@ -281,11 +276,9 @@
       background: var(--red);
       color: #fff;
     }
-
     #btn-stop:hover:not(:disabled) { background: #dc2626; }
     #btn-stop:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
 
-    /* Status */
     #status {
       margin-top: 16px;
       font-size: 0.9rem;
@@ -293,10 +286,15 @@
       min-height: 1.2rem;
       text-align: center;
     }
-
     #status.error { color: #f87171; }
-
-    #status.speaking {
+    #status.busy {
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    #status.playing {
       color: var(--green);
       display: flex;
       align-items: center;
@@ -304,12 +302,21 @@
       gap: 8px;
     }
 
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(37,99,235,0.25);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .wave {
       display: inline-flex;
       gap: 3px;
       align-items: flex-end;
     }
-
     .wave span {
       display: inline-block;
       width: 3px;
@@ -317,19 +324,16 @@
       border-radius: 2px;
       animation: wave 0.8s ease-in-out infinite;
     }
-
     .wave span:nth-child(1) { height: 8px;  animation-delay: 0s; }
     .wave span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
     .wave span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
     .wave span:nth-child(4) { height: 16px; animation-delay: 0.15s; }
     .wave span:nth-child(5) { height: 8px;  animation-delay: 0.05s; }
-
     @keyframes wave {
       0%, 100% { transform: scaleY(1); }
       50%       { transform: scaleY(0.4); }
     }
 
-    /* Footer */
     footer {
       margin-top: 8px;
       font-size: 0.78rem;
@@ -343,8 +347,8 @@
   <header>
     <div class="logo-badge">🔊 Jimmy Hubbard</div>
     <h1>Text to <span class="title-accent">Audio</span></h1>
-    <p>Upload a .txt file or paste your text — then hit Play.</p>
-    <p style="margin-top:8px;font-size:0.78rem;color:#6b7a99;letter-spacing:0.3px;">Powered by Web Speech API &nbsp;·&nbsp; Built by Jimmy Hubbard</p>
+    <p>Type or upload text — get neural Polly audio.</p>
+    <p style="margin-top:8px;font-size:0.78rem;color:#6b7a99;letter-spacing:0.3px;">Powered by AWS Polly &nbsp;·&nbsp; Built by Jimmy Hubbard</p>
   </header>
 
   <!-- Instructions -->
@@ -354,11 +358,11 @@
       <h2>How to Use</h2>
     </div>
     <ol class="steps">
-      <li><span>Upload a <strong>.txt file</strong> using the upload area below, or type/paste text directly into the text box.</span></li>
-      <li><span>Choose a <strong>voice</strong> from the dropdown (options depend on your browser/OS).</span></li>
-      <li><span>Adjust <strong>speed</strong> and <strong>pitch</strong> to your preference using the sliders.</span></li>
-      <li><span>Click <strong>Play</strong> to hear your text read aloud.</span></li>
-      <li><span>Click <strong>Stop</strong> at any time to halt playback.</span></li>
+      <li><span>Upload a <strong>.txt file</strong> or paste text directly into the text box (up to 3,000 characters per request).</span></li>
+      <li><span>Pick a <strong>voice</strong> — 10 neural voices across English, Spanish, French, and German.</span></li>
+      <li><span>Adjust <strong>speed</strong> from 0.5× to 2×.</span></li>
+      <li><span>Click <strong>Play</strong>. The text is sent to AWS Polly and the resulting mp3 plays in your browser.</span></li>
+      <li><span>Click <strong>Stop</strong> to halt playback or cancel an in-flight request.</span></li>
     </ol>
   </div>
 
@@ -380,21 +384,28 @@
     <div id="file-name"></div>
 
     <textarea id="text-input" placeholder="Or type / paste your text here..."></textarea>
+    <div id="char-counter">0 / 3,000</div>
 
     <div class="controls">
       <div class="control-group">
         <label for="voice-select">Voice</label>
-        <select id="voice-select"><option>Loading voices...</option></select>
+        <select id="voice-select">
+          <option value="Joanna">English (US) — Joanna</option>
+          <option value="Matthew">English (US) — Matthew</option>
+          <option value="Amy">English (UK) — Amy</option>
+          <option value="Brian">English (UK) — Brian</option>
+          <option value="Lupe">Spanish (US) — Lupe</option>
+          <option value="Pedro">Spanish (US) — Pedro</option>
+          <option value="Andres">Spanish (Mexico) — Andrés</option>
+          <option value="Lucia">Spanish (Spain) — Lucia</option>
+          <option value="Lea">French (France) — Léa</option>
+          <option value="Vicki">German (Germany) — Vicki</option>
+        </select>
       </div>
       <div class="control-group">
         <label for="rate-slider">Speed</label>
-        <input type="range" id="rate-slider" min="0.5" max="2" step="0.1" value="1" />
-        <div class="range-val" id="rate-val">1.0×</div>
-      </div>
-      <div class="control-group">
-        <label for="pitch-slider">Pitch</label>
-        <input type="range" id="pitch-slider" min="0.5" max="2" step="0.1" value="1" />
-        <div class="range-val" id="pitch-val">1.0</div>
+        <input type="range" id="rate-slider" min="0.5" max="2" step="0.05" value="1" />
+        <div class="range-val" id="rate-val">1.00×</div>
       </div>
     </div>
 
@@ -406,44 +417,64 @@
     <div id="status"></div>
   </div>
 
-  <footer>Powered by the Web Speech API &mdash; Chrome · Edge · Safari · Firefox &mdash; <a href="https://jimmyhubbard2.cc/projects/" style="color:#475569;text-decoration:none;">← Back to Projects</a></footer>
+  <footer>Powered by AWS Polly — Lambda + API Gateway — <a href="https://jimmyhubbard2.cc/projects/" style="color:#475569;text-decoration:none;">← Back to Projects</a></footer>
 
   <script>
-    const dropZone    = document.getElementById('drop-zone');
-    const fileInput   = document.getElementById('file-input');
-    const browseLink  = document.getElementById('browse-link');
-    const fileNameEl  = document.getElementById('file-name');
-    const textInput   = document.getElementById('text-input');
-    const voiceSel    = document.getElementById('voice-select');
-    const rateSlider  = document.getElementById('rate-slider');
-    const pitchSlider = document.getElementById('pitch-slider');
-    const rateVal     = document.getElementById('rate-val');
-    const pitchVal    = document.getElementById('pitch-val');
-    const btnPlay     = document.getElementById('btn-play');
-    const btnStop     = document.getElementById('btn-stop');
-    const statusEl    = document.getElementById('status');
+    // ─── CONFIG ─────────────────────────────────────────────────────
+    // RATE_LIMIT_TOKEN is a public-side rate-limit token, NOT a secret. It
+    // enforces throttle (10 rps / 20 burst) and quota (1000/day) at API Gateway.
+    // Embedding it in the page is the intended design.
+    const API_ENDPOINT     = 'https://yhrh1k32ra.execute-api.us-east-1.amazonaws.com/prod/synthesize';
+    const RATE_LIMIT_TOKEN = 'w3KvUH9obK5Y6SQitrXrn8ryFSx5H2nJ5ykuxHXv';
+    const MAX_CHARS  = 3000;
+    const WARN_CHARS = 2500;
+    // ────────────────────────────────────────────────────────────────
 
-    let voices = [];
+    const dropZone   = document.getElementById('drop-zone');
+    const fileInput  = document.getElementById('file-input');
+    const browseLink = document.getElementById('browse-link');
+    const fileNameEl = document.getElementById('file-name');
+    const textInput  = document.getElementById('text-input');
+    const charCount  = document.getElementById('char-counter');
+    const voiceSel   = document.getElementById('voice-select');
+    const rateSlider = document.getElementById('rate-slider');
+    const rateVal    = document.getElementById('rate-val');
+    const btnPlay    = document.getElementById('btn-play');
+    const btnStop    = document.getElementById('btn-stop');
+    const statusEl   = document.getElementById('status');
 
-    function loadVoices() {
-      voices = speechSynthesis.getVoices();
-      voiceSel.innerHTML = '';
-      if (!voices.length) { voiceSel.innerHTML = '<option>No voices found</option>'; return; }
-      voices.forEach((v, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = `${v.name} (${v.lang})`;
-        voiceSel.appendChild(opt);
-      });
+    // Single source of truth for "Play button must stay disabled". Set true
+    // when fetch is in flight or audio is playing. Cleared in setReady().
+    let isBusy = false;
+    let inFlightController = null;
+    let currentAudio = null;
+    let currentBlobUrl = null;
+
+    // ─── char counter ──────────────────────────────────────────────
+    function updateCharCount() {
+      const n = textInput.value.length;
+      charCount.textContent = `${n.toLocaleString()} / ${MAX_CHARS.toLocaleString()}`;
+      charCount.className = '';
+      if (n > MAX_CHARS) {
+        charCount.classList.add('error');
+        btnPlay.disabled = true;
+      } else if (n >= WARN_CHARS) {
+        charCount.classList.add('warn');
+        btnPlay.disabled = isBusy;
+      } else {
+        btnPlay.disabled = isBusy;
+      }
     }
+    textInput.addEventListener('input', updateCharCount);
+    updateCharCount();
 
-    loadVoices();
-    speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    // ─── speed slider readout ──────────────────────────────────────
+    rateSlider.addEventListener('input', () => {
+      rateVal.textContent = parseFloat(rateSlider.value).toFixed(2) + '×';
+    });
 
-    rateSlider.addEventListener('input',  () => rateVal.textContent  = parseFloat(rateSlider.value).toFixed(1) + '×');
-    pitchSlider.addEventListener('input', () => pitchVal.textContent = parseFloat(pitchSlider.value).toFixed(1));
-
-    browseLink.addEventListener('click', () => fileInput.click());
+    // ─── file upload ───────────────────────────────────────────────
+    browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
     dropZone.addEventListener('click',   () => fileInput.click());
     dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('over'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
@@ -454,42 +485,124 @@
     fileInput.addEventListener('change', () => { if (fileInput.files[0]) readFile(fileInput.files[0]); });
 
     function readFile(file) {
-      if (!file.name.endsWith('.txt')) { setStatus('Please upload a .txt file.', 'error'); return; }
+      if (!file.name.toLowerCase().endsWith('.txt')) {
+        setStatus('Please upload a .txt file.', 'error'); return;
+      }
       const reader = new FileReader();
       reader.onload = e => {
         textInput.value = e.target.result;
         fileNameEl.textContent = `✓ Loaded: ${file.name} (${file.size.toLocaleString()} bytes)`;
+        updateCharCount();
         setStatus('');
       };
       reader.readAsText(file);
     }
 
-    btnPlay.addEventListener('click', () => {
+    // ─── play / stop ───────────────────────────────────────────────
+    btnPlay.addEventListener('click', play);
+    btnStop.addEventListener('click', stop);
+
+    async function play() {
       const text = textInput.value.trim();
       if (!text) { setStatus('Please enter or upload some text first.', 'error'); return; }
-      speechSynthesis.cancel();
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.voice = voices[voiceSel.value] || null;
-      utt.rate  = parseFloat(rateSlider.value);
-      utt.pitch = parseFloat(pitchSlider.value);
-      utt.onstart = () => {
-        btnPlay.disabled = true; btnStop.disabled = false;
-        statusEl.innerHTML = '<span class="wave"><span></span><span></span><span></span><span></span><span></span></span> Speaking...';
-        statusEl.className = 'speaking';
-      };
-      utt.onend = utt.onerror = () => {
-        btnPlay.disabled = false; btnStop.disabled = true;
-        setStatus('');
-      };
-      speechSynthesis.speak(utt);
-    });
+      if (text.length > MAX_CHARS) {
+        setStatus(`Text exceeds ${MAX_CHARS} character limit (${text.length}).`, 'error'); return;
+      }
 
-    btnStop.addEventListener('click', () => {
-      speechSynthesis.cancel();
-      btnPlay.disabled = false; btnStop.disabled = true;
-      setStatus('');
-    });
+      cleanupAudio();
+      setBusy('Synthesizing with Polly...');
+      inFlightController = new AbortController();
 
+      const voiceId = voiceSel.value;
+      const rate = `${Math.round(parseFloat(rateSlider.value) * 100)}%`;
+
+      try {
+        const res = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': RATE_LIMIT_TOKEN,
+            'Accept': 'audio/mpeg',
+          },
+          body: JSON.stringify({ text, voiceId, rate }),
+          signal: inFlightController.signal,
+        });
+
+        if (!res.ok) {
+          let msg = `HTTP ${res.status}`;
+          try { const err = await res.json(); if (err && err.error) msg = err.error; } catch (_) {}
+          if (res.status === 403) msg = 'Throttled or daily quota reached. Try again later.';
+          throw new Error(msg);
+        }
+
+        // Defensive: API Gateway should send audio/mpeg when Accept matches a
+        // configured binary-media-type. If we somehow get JSON, surface it
+        // instead of letting <audio> choke on a JSON envelope.
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.toLowerCase().includes('audio')) {
+          let preview = '';
+          try { preview = (await res.text()).slice(0, 200); } catch (_) {}
+          throw new Error(`Unexpected response type "${ct}". ${preview}`);
+        }
+
+        const blob = await res.blob();
+        currentBlobUrl = URL.createObjectURL(blob);
+        currentAudio = new Audio(currentBlobUrl);
+        currentAudio.addEventListener('ended', () => { setReady(); cleanupAudio(); });
+        currentAudio.addEventListener('error', () => { setStatus('Audio playback failed.', 'error'); cleanupAudio(); setReady(); });
+        await currentAudio.play();
+        setPlaying();
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          setStatus('');
+        } else {
+          setStatus('Error: ' + err.message, 'error');
+        }
+        cleanupAudio();
+        setReady();
+      } finally {
+        inFlightController = null;
+      }
+    }
+
+    function stop() {
+      if (inFlightController) inFlightController.abort();
+      cleanupAudio();
+      setReady();
+    }
+
+    function cleanupAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      if (currentBlobUrl) {
+        URL.revokeObjectURL(currentBlobUrl);
+        currentBlobUrl = null;
+      }
+    }
+
+    // ─── status helpers ────────────────────────────────────────────
+    function setBusy(msg) {
+      isBusy = true;
+      statusEl.innerHTML = `<span class="spinner"></span> ${msg}`;
+      statusEl.className = 'busy';
+      btnPlay.disabled = true; btnStop.disabled = false;
+    }
+    function setPlaying() {
+      isBusy = true;
+      statusEl.innerHTML = '<span class="wave"><span></span><span></span><span></span><span></span><span></span></span> Playing...';
+      statusEl.className = 'playing';
+      btnPlay.disabled = true; btnStop.disabled = false;
+    }
+    function setReady() {
+      isBusy = false;
+      statusEl.textContent = '';
+      statusEl.className = '';
+      btnStop.disabled = true;
+      updateCharCount();
+    }
     function setStatus(msg, type = '') {
       statusEl.textContent = msg;
       statusEl.className = type;

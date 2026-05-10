@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+lambda.zip
+*.zip
+.DS_Store
