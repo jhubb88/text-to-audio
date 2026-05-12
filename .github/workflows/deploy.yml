@@ -52,4 +52,28 @@ jobs:
             --function-name jimmy-text-to-audio \
             --zip-file fileb://lambda.zip \
             --no-cli-pager
+          aws lambda wait function-updated \
+            --function-name jimmy-text-to-audio
           rm lambda.zip
+
+      - name: CORS smoke test
+        run: |
+          API_URL="https://yhrh1k32ra.execute-api.us-east-1.amazonaws.com/prod/synthesize"
+          ORIGIN="https://text-to-audio.jimmyhubbard2.cc"
+
+          RESPONSE=$(curl -s -i -X OPTIONS "$API_URL" \
+            -H "Origin: $ORIGIN" \
+            -H "Access-Control-Request-Method: POST" \
+            -H "Access-Control-Request-Headers: content-type,x-api-key")
+
+          echo "$RESPONSE"
+
+          ALLOW_HEADERS=$(echo "$RESPONSE" | grep -i "access-control-allow-headers" | tr -d '\r')
+
+          if echo "$ALLOW_HEADERS" | grep -qi "x-api-key"; then
+            echo "✅ CORS preflight allows x-api-key"
+          else
+            echo "❌ CORS preflight MISSING x-api-key in Access-Control-Allow-Headers"
+            echo "Response was: $ALLOW_HEADERS"
+            exit 1
+          fi
