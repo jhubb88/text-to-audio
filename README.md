@@ -4,6 +4,8 @@ Type or upload text — get neural-quality mp3 audio from AWS Polly. Frontend on
 
 **Live demo:** https://text-to-audio.jimmyhubbard2.cc
 
+**Full documentation:** [PROJECT_MASTER.md](./PROJECT_MASTER.md) — architecture, AWS operational reference, build history, and key decisions
+
 ## Overview
 
 Text to Audio sends text to AWS Polly via a Lambda proxy and plays the returned mp3 in the browser. Ten neural voices across English, Spanish, French, and German. Speed control (0.5×–2×) is applied as SSML `<prosody rate>`. The app is hardened with API key rate limiting at the gateway, a per-request character cap in the Lambda, and an AWS Budget alarm on Polly spend.
